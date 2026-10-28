@@ -22,8 +22,7 @@
   const items = await (await fetch("/api/results")).json();
   const list = document.getElementById("list");
   if (!items.length) {
-    list.innerHTML = '<p class="lead">The demo results are being generated on the server. This takes a minute or two after each deploy; this page refreshes by itself.</p>';
-    setTimeout(() => location.reload(), 20000);
+    list.innerHTML = '<p class="lead">No demo results in this deployment yet. Run <code>python run_demo.py</code> and commit <code>output/</code>.</p>';
     return;
   }
   const groups = {};

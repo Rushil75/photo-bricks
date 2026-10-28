@@ -1,0 +1,5 @@
+# Local tools on top of the runtime: tests, client PDF (make_pack.py), palette import (tools/build_palette.py).
+-r requirements.txt
+pytest==9.2.0
+reportlab==5.1.0
+openpyxl==3.1.5

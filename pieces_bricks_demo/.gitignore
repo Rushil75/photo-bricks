@@ -2,4 +2,8 @@
 __pycache__/
 .pytest_cache/
 uploads/
-output/
+models/experimental/
+# output/ is committed (the deployed site serves the demo results); skip review-only files
+output/*/source.jpg
+output/*/processed.jpg
+output/client_pack/_img/
