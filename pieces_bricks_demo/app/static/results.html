@@ -21,7 +21,11 @@
 (async () => {
   const items = await (await fetch("/api/results")).json();
   const list = document.getElementById("list");
-  if (!items.length) { list.innerHTML = '<p class="lead">No results yet. Run <code>python run_demo.py</code> first.</p>'; return; }
+  if (!items.length) {
+    list.innerHTML = '<p class="lead">The demo results are being generated on the server. This takes a minute or two after each deploy; this page refreshes by itself.</p>';
+    setTimeout(() => location.reload(), 20000);
+    return;
+  }
   const groups = {};
   for (const it of items) (groups[`${it.photo}_${it.size}`] ??= []).push(it);
   for (const g of Object.values(groups)) g.sort((a, b) => (a.variant === "dither") - (b.variant === "dither"));

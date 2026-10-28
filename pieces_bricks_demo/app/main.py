@@ -11,6 +11,8 @@ import json
 import os
 import secrets
 import shutil
+import subprocess
+import sys
 import tempfile
 import threading
 import uuid
@@ -61,9 +63,31 @@ async def require_password(request: Request, call_next):
                     headers={"WWW-Authenticate": 'Basic realm="Pieces & Bricks demo"'})
 
 
+_status = {"segmentation": "checking", "results": "checking"}
+
+
+def _warm_up() -> None:
+    """Runs in the background so the server answers immediately after a deploy."""
+    _status["segmentation"] = "mediapipe" if pp.mediapipe_ok() else "face-boxes (MediaPipe unavailable)"
+    if (OUTPUT / "index.json").exists():
+        _status["results"] = "ready"
+        return
+    # Demo results aren't in git; build them once per deploy, in a separate process.
+    _status["results"] = "generating"
+    r = subprocess.run([sys.executable, "run_demo.py"], cwd=ROOT, capture_output=True, text=True)
+    _status["results"] = "ready" if r.returncode == 0 else f"failed (exit {r.returncode})"
+    if r.returncode != 0:
+        print("run_demo.py failed:\n" + r.stderr[-2000:], flush=True)
+
+
+@app.on_event("startup")
+def start_warm_up() -> None:
+    threading.Thread(target=_warm_up, daemon=True).start()
+
+
 @app.get("/healthz")
 def healthz():
-    return {"ok": True}
+    return {"ok": True, **_status}
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 app.mount("/output", StaticFiles(directory=OUTPUT), name="output")
 

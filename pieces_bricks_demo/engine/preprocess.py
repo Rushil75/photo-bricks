@@ -5,6 +5,8 @@ Images are RGB uint8 numpy arrays unless noted. Masks are float32 in [0, 1].
 from __future__ import annotations
 
 import logging
+import subprocess
+import sys
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -175,9 +177,37 @@ def _segmenter():
     return seg
 
 
+_PROBE = """
+import sys, numpy as np
+sys.path.insert(0, sys.argv[1])
+from engine.preprocess import _segmenter
+import mediapipe as mp
+_segmenter().segment(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.zeros((64, 64, 3), np.uint8)))
+"""
+
+
+@lru_cache(maxsize=1)
+def mediapipe_ok() -> bool:
+    """MediaPipe's native code can abort the whole process, which try/except cannot catch
+    (e.g. its tcmalloc can't read the CPU count inside some containers). Try it once in a
+    child process; if that dies, use the face-box fallback instead of crashing the server."""
+    try:
+        r = subprocess.run([sys.executable, "-c", _PROBE, str(Path(__file__).resolve().parents[1])],
+                           capture_output=True, timeout=180)
+    except subprocess.TimeoutExpired:
+        log.warning("MediaPipe probe timed out; using face-box masks")
+        return False
+    if r.returncode != 0:
+        log.warning("MediaPipe unavailable (exit %s); using face-box masks. %s",
+                    r.returncode, r.stderr.decode(errors="replace").strip()[-400:])
+    return r.returncode == 0
+
+
 def segment(rgb: np.ndarray) -> np.ndarray | None:
     """MediaPipe multiclass selfie segmentation -> category map
     (0 bg, 1 hair, 2 body skin, 3 face skin, 4 clothes, 5 other). None if unavailable."""
+    if not mediapipe_ok():
+        return None
     try:
         import mediapipe as mp
         out = _segmenter().segment(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(rgb)))
