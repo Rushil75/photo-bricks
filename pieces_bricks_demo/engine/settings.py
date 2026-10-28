@@ -36,7 +36,7 @@ class Settings:
     # 6. Background
     bg_mode: str = "bilateral"        # bilateral | meanshift | none
     bg_strength: float = 1.0          # 0..2, scales filter radius and iterations
-    segmentation: str = "mediapipe"   # mediapipe | faces
+    segmentation: str = "model"       # model (selfie segmentation) | faces (padded face boxes)
 
     # 8. Colour matching
     l_weight: float = 1.15            # >1 weights lightness more (CIEDE2000 kL = 1 / l_weight)

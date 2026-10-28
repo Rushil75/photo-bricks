@@ -1,0 +1,40 @@
+code,name,hex,quantity
+C35,Light Blue,#C1EFE3,383
+C36,Sky Blue,#93BCE6,278
+C11,Neon Blue,#00B5CC,194
+C03,Light Beige,#FFD7C3,114
+C25,Light Pink,#EDAAD6,114
+C23,Green,#00A64D,108
+C01,Black,#302E32,103
+C12,Yellow,#FFD300,96
+C04,Beige,#EBC0A4,83
+C05,Dark Beige,#ECA279,80
+C22,Lime,#9CBB27,69
+C09,Dark Brown,#73483A,61
+C19,Light Yellow,#FFF076,58
+C10,Reddish Brown,#523E37,47
+C21,Dark Blue,#23415D,47
+C06,Peach,#DE9064,46
+C07,Light Brown,#B37C51,39
+C24,Dark Green,#1A4D3B,35
+C18,Blue,#0065B2,33
+C02,White,#F7F0E3,32
+C32,Navy Blue,#7B91A5,31
+C20,Pink,#D85FA5,27
+C16,Light Orange,#FFAE11,26
+C33,Light Grey,#A3A9AA,24
+C34,Mouse Grey,#6F7176,24
+C31,Olive Green,#8D8F63,22
+C40,Dark Grey,#4B4C50,21
+C08,Brown,#AB5827,19
+C37,Red Wine,#853433,16
+C28,Purple,#AE78C2,13
+C39,Bronze,#998769,13
+C17,Medium Blue,#58A3DA,12
+C30,Pastel Green,#749883,11
+C26,Dark Pink,#B72C75,8
+C38,Vanilla,#DFC790,8
+C27,Lavender Purple,#C0AEDF,5
+C13,Magenta,#FD637D,2
+C15,Red,#CD2928,2
+TOTAL,,,2304

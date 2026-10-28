@@ -1,6 +1,9 @@
 """FastAPI demo: upload a photo, crop, convert with the engine, edit bricks, download the pack.
 
 Run: .venv/bin/uvicorn app.main:app --reload --port 8000
+
+Stateless, so it runs on serverless hosts (Vercel) as well as a normal server: nothing is
+written to disk, and every /api/convert call carries its own photo (or a sample's name).
 """
 from __future__ import annotations
 
@@ -11,22 +14,18 @@ import json
 import os
 import secrets
 import shutil
-import subprocess
-import sys
 import tempfile
 import threading
-import uuid
 import zipfile
-from collections import OrderedDict
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
-import numpy as np
-from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 
 from engine import Settings, load_palette, render_from_matrix, run
 from engine import export, preprocess as pp
@@ -34,13 +33,9 @@ from engine import export, preprocess as pp
 ROOT = Path(__file__).resolve().parents[1]
 INPUT = ROOT / "input"
 OUTPUT = ROOT / "output"
-UPLOADS = ROOT / "uploads"
 STATIC = Path(__file__).resolve().parent / "static"
-UPLOADS.mkdir(exist_ok=True)
-OUTPUT.mkdir(exist_ok=True)
 
-DISPLAY_MAX = 1400       # longest side of the image sent to the browser for cropping
-SIZES = [32, 48, 64, 96]
+DISPLAY_MAX = 1400       # longest side of a sample image sent to the browser for cropping
 
 app = FastAPI(title="Pieces & Bricks demo")
 
@@ -63,81 +58,58 @@ async def require_password(request: Request, call_next):
                     headers={"WWW-Authenticate": 'Basic realm="Pieces & Bricks demo"'})
 
 
-_status = {"segmentation": "checking", "results": "checking"}
-
-
-def _warm_up() -> None:
-    """Runs in the background so the server answers immediately after a deploy."""
-    _status["segmentation"] = "mediapipe" if pp.mediapipe_ok() else "face-boxes (MediaPipe unavailable)"
-    if (OUTPUT / "index.json").exists():
-        _status["results"] = "ready"
-        return
-    # Demo results aren't in git; build them once per deploy, in a separate process.
-    _status["results"] = "generating"
-    r = subprocess.run([sys.executable, "run_demo.py"], cwd=ROOT, capture_output=True, text=True)
-    _status["results"] = "ready" if r.returncode == 0 else f"failed (exit {r.returncode})"
-    if r.returncode != 0:
-        print("run_demo.py failed:\n" + r.stderr[-2000:], flush=True)
-
-
-@app.on_event("startup")
-def start_warm_up() -> None:
-    threading.Thread(target=_warm_up, daemon=True).start()
-
-
 @app.get("/healthz")
 def healthz():
-    return {"ok": True, **_status}
+    checked = pp.segmenter_ok.cache_info().currsize > 0
+    seg = ("selfie-multiclass" if pp.segmenter_ok() else "face-boxes (segmenter unavailable)") if checked \
+        else "not checked yet (runs on the first conversion)"
+    return {"ok": True, "segmentation": seg, "results": (OUTPUT / "index.json").exists()}
+
+
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
-app.mount("/output", StaticFiles(directory=OUTPUT), name="output")
+if OUTPUT.is_dir():
+    app.mount("/output", StaticFiles(directory=OUTPUT), name="output")
 
-_engine_lock = threading.Lock()  # MediaPipe / OpenCV DNN objects are shared and not thread-safe
-_images: "OrderedDict[str, np.ndarray]" = OrderedDict()
+_engine_lock = threading.Lock()  # the OpenCV DNN / LiteRT objects are shared and not thread-safe
 
 
-# ---------------------------------------------------------------- image store
+# ---------------------------------------------------------------- images
 
-def _store(data: bytes, name: str) -> dict:
+def _read_image(data: bytes):
     try:
-        rgb = pp.load_image(data)
+        return pp.load_image(data)
     except Exception:
         raise HTTPException(400, "Could not read that file as an image")
-    image_id = uuid.uuid4().hex[:12]
-    d = UPLOADS / image_id
-    d.mkdir()
-    (d / ("original" + (Path(name).suffix.lower() or ".jpg"))).write_bytes(data)
-    h, w = rgb.shape[:2]
-    s = min(1.0, DISPLAY_MAX / max(h, w))
-    Image.fromarray(rgb).resize((round(w * s), round(h * s)), Image.LANCZOS).save(d / "display.jpg", quality=90)
+
+
+def _sample_path(name: str) -> Path:
+    path = INPUT / name
+    if path.parent != INPUT or not path.exists():
+        raise HTTPException(404, "No such sample")
+    return path
+
+
+@lru_cache(maxsize=8)
+def _sample_rgb(name: str):
+    return pp.load_image(_sample_path(name))
+
+
+def _describe(rgb) -> dict:
+    """Size, faces and the suggested square crop, all in the image's own pixels."""
     with _engine_lock:
         faces = pp.detect_faces(rgb)
-    suggested = pp.auto_crop(rgb.shape, faces, Settings())
-    meta = {"image_id": image_id, "name": name, "width": w, "height": h,
-            "display_url": f"/api/images/{image_id}/display.jpg",
-            "faces": [f.to_json() for f in faces], "suggested_crop": suggested}
-    (d / "meta.json").write_text(json.dumps(meta))
-    _cache(image_id, rgb)
-    return meta
+    h, w = rgb.shape[:2]
+    return {"width": w, "height": h, "faces": [f.to_json() for f in faces],
+            "suggested_crop": pp.auto_crop(rgb.shape, faces, Settings())}
 
 
-def _cache(image_id: str, rgb: np.ndarray) -> None:
-    _images[image_id] = rgb
-    _images.move_to_end(image_id)
-    while len(_images) > 8:
-        _images.popitem(last=False)
+def _jpeg(im: Image.Image, quality: int = 88) -> bytes:
+    buf = io.BytesIO()
+    im.save(buf, "JPEG", quality=quality)
+    return buf.getvalue()
 
 
-def _get_image(image_id: str) -> tuple[np.ndarray, dict]:
-    d = UPLOADS / image_id
-    if not image_id.isalnum() or not (d / "meta.json").exists():
-        raise HTTPException(404, "Unknown image; upload it again")
-    meta = json.loads((d / "meta.json").read_text())
-    if image_id not in _images:
-        _cache(image_id, pp.load_image(next(d.glob("original.*"))))
-    return _images[image_id], meta
-
-
-# ---------------------------------------------------------------- API
+# ---------------------------------------------------------------- pages + API
 
 @app.get("/")
 def index():
@@ -159,58 +131,60 @@ def samples():
     return [p.name for p in sorted(INPUT.iterdir()) if p.suffix.lower() in (".jpg", ".jpeg", ".png")]
 
 
-def _sample_path(name: str) -> Path:
-    path = INPUT / name
-    if path.parent != INPUT or not path.exists():
-        raise HTTPException(404, "No such sample")
-    return path
-
-
 @app.get("/api/samples/{name}/thumb.jpg")
 def sample_thumb(name: str):
-    im = Image.fromarray(pp.load_image(_sample_path(name)))
+    im = Image.fromarray(_sample_rgb(name))
     im.thumbnail((240, 240))
-    buf = io.BytesIO()
-    im.save(buf, "JPEG", quality=85)
-    return Response(buf.getvalue(), media_type="image/jpeg", headers={"Cache-Control": "max-age=3600"})
+    return Response(_jpeg(im, 85), media_type="image/jpeg", headers={"Cache-Control": "max-age=3600"})
+
+
+@app.get("/api/samples/{name}/display.jpg")
+def sample_display(name: str):
+    im = Image.fromarray(_sample_rgb(name))
+    im.thumbnail((DISPLAY_MAX, DISPLAY_MAX))
+    return Response(_jpeg(im, 90), media_type="image/jpeg", headers={"Cache-Control": "max-age=3600"})
 
 
 @app.post("/api/samples/{name}")
-def use_sample(name: str):
-    return _store(_sample_path(name).read_bytes(), name)
+def describe_sample(name: str):
+    return {**_describe(_sample_rgb(name)), "sample": name,
+            "display_url": f"/api/samples/{name}/display.jpg"}
 
 
-@app.post("/api/upload")
-async def upload(file: UploadFile = File(...)):
-    return _store(await file.read(), file.filename or "upload.jpg")
+@app.post("/api/detect")
+def describe_upload(file: UploadFile = File(...)):
+    """Faces and suggested crop for an uploaded photo. Nothing is stored."""
+    return _describe(_read_image(file.file.read()))
 
 
-@app.get("/api/images/{image_id}/display.jpg")
-def display_image(image_id: str):
-    _get_image(image_id)
-    return FileResponse(UPLOADS / image_id / "display.jpg")
-
-
-class ConvertRequest(BaseModel):
-    image_id: str
+class ConvertParams(BaseModel):
+    sample: Optional[str] = None       # a file in input/; otherwise the uploaded `file` is used
     size: int = Field(48, ge=8, le=160)
-    crop: Optional[list[int]] = None   # [x, y, side] in original pixels; None = auto
+    crop: Optional[list[int]] = None   # [x, y, side] in the image's pixels; None = auto
     dither: bool = False
     settings: dict = Field(default_factory=dict)  # any other engine setting
 
 
 @app.post("/api/convert")
-def convert(req: ConvertRequest):
-    rgb, meta = _get_image(req.image_id)
+def convert(params: str = Form(...), file: Optional[UploadFile] = File(None)):
+    try:
+        req = ConvertParams.model_validate_json(params)
+    except ValidationError as e:
+        raise HTTPException(422, str(e))
+    if req.sample:
+        name, rgb = req.sample, _sample_rgb(req.sample)
+    elif file is not None:
+        name, rgb = file.filename or "upload.jpg", _read_image(file.file.read())
+    else:
+        raise HTTPException(422, "Send a photo or a sample name")
     try:
         st = Settings.from_dict({**req.settings, "size": req.size, "dither": req.dither, "crop": req.crop})
     except (TypeError, ValueError) as e:
         raise HTTPException(422, str(e))
     with _engine_lock:
-        res = run(meta["name"], st, image=rgb)
+        res = run(name, st, image=rgb)
     pal = res.palette
-    crop_png = io.BytesIO()
-    Image.fromarray(res.crop_rgb).resize((512, 512), Image.LANCZOS).save(crop_png, "JPEG", quality=88)
+    crop_jpg = _jpeg(Image.fromarray(res.crop_rgb).resize((512, 512), Image.LANCZOS))
     return {
         "size": res.size,
         "palette_version": pal.version,
@@ -218,7 +192,7 @@ def convert(req: ConvertRequest):
         "source": res.source,
         "grid": res.matrix,
         "counts": export.counts(res.matrix, pal),
-        "crop_image": "data:image/jpeg;base64," + base64.b64encode(crop_png.getvalue()).decode(),
+        "crop_image": "data:image/jpeg;base64," + base64.b64encode(crop_jpg).decode(),
     }
 
 
@@ -237,7 +211,7 @@ def export_pack(req: ExportRequest):
         export.validate(doc, pal)
     except ValueError as e:
         raise HTTPException(422, str(e))
-    tmp = Path(tempfile.mkdtemp())
+    tmp = Path(tempfile.mkdtemp())  # /tmp is writable on serverless hosts too
     try:
         export.write_matrix(tmp / "matrix.json", req.grid, pal, req.settings, req.source)
         render_from_matrix(tmp, pal)
@@ -254,7 +228,7 @@ def export_pack(req: ExportRequest):
 
 @app.get("/api/results")
 def batch_results():
-    """The offline Phase 1 results produced by run_demo.py."""
+    """The offline Phase 1 results produced by run_demo.py (committed under output/)."""
     idx = OUTPUT / "index.json"
     items = json.loads(idx.read_text()) if idx.exists() else []
     for it in items:
