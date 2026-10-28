@@ -46,6 +46,16 @@ and the open questions. `output/client_pack/pack_manifest.json` records the exac
 - `/results`: gallery of the batch results from `run_demo.py`.
 - API: `POST /api/upload`, `POST /api/convert`, `POST /api/export`, `GET /api/palette`, `GET /api/results`.
 
+## Deploying (Render)
+
+`render.yaml` (repo root) deploys this folder as a Docker web service. In Render: **New → Blueprint**, pick the
+repo, and enter a `DEMO_PASSWORD` when asked. The Docker build installs the pinned versions from
+`requirements-deploy.txt` and generates the 18 demo results for `/results`.
+
+- Plan: **Standard (2 GB)**. A conversion needs about 1 GB of memory, so the 512 MB free and starter plans will crash.
+- With `DEMO_PASSWORD` set, the browser asks for a password once (any username). `/healthz` stays open for Render.
+- Uploaded photos live on the server's disk and are lost on each redeploy, which is fine for a demo.
+
 ## Layout
 
 ```

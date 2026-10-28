@@ -1,0 +1,14 @@
+# Render Blueprint: New > Blueprint in the Render dashboard, then pick this repo.
+services:
+  - type: web
+    name: pieces-bricks-demo
+    runtime: docker
+    rootDir: pieces_bricks_demo
+    dockerfilePath: ./Dockerfile
+    # The engine needs ~1 GB of memory; free and starter plans have 512 MB.
+    plan: standard
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: DEMO_PASSWORD
+        sync: false   # Render asks for the value when the Blueprint is created

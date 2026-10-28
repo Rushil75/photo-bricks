@@ -1,0 +1,20 @@
+FROM python:3.12-slim
+
+# libGL/EGL/GLES: MediaPipe's native library needs them even on CPU. DejaVu: fonts for grid.png and captions.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libgl1 libegl1 libgles2 libglib2.0-0 fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY requirements-deploy.txt .
+RUN pip install --no-cache-dir -r requirements-deploy.txt
+
+COPY . .
+
+# Generate the 18 demo results for the /results gallery (output/ is not in git).
+RUN python run_demo.py
+
+ENV PYTHONUNBUFFERED=1 GLOG_minloglevel=2 TF_CPP_MIN_LOG_LEVEL=2 OPENCV_LOG_LEVEL=ERROR
+EXPOSE 8000
+# One worker: the engine holds ~1 GB in memory per process.
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]

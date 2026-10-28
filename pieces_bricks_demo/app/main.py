@@ -5,8 +5,11 @@ Run: .venv/bin/uvicorn app.main:app --reload --port 8000
 from __future__ import annotations
 
 import base64
+import binascii
 import io
 import json
+import os
+import secrets
 import shutil
 import tempfile
 import threading
@@ -17,7 +20,7 @@ from pathlib import Path
 from typing import Optional
 
 import numpy as np
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
@@ -38,6 +41,29 @@ DISPLAY_MAX = 1400       # longest side of the image sent to the browser for cro
 SIZES = [32, 48, 64, 96]
 
 app = FastAPI(title="Pieces & Bricks demo")
+
+# Private link: when DEMO_PASSWORD is set, every request needs it (browser login prompt, any username).
+DEMO_PASSWORD = os.environ.get("DEMO_PASSWORD", "")
+
+
+@app.middleware("http")
+async def require_password(request: Request, call_next):
+    if not DEMO_PASSWORD or request.url.path == "/healthz":
+        return await call_next(request)
+    try:
+        scheme, _, encoded = request.headers.get("authorization", "").partition(" ")
+        password = base64.b64decode(encoded).decode().partition(":")[2] if scheme.lower() == "basic" else ""
+    except (binascii.Error, UnicodeDecodeError):
+        password = ""
+    if secrets.compare_digest(password.encode(), DEMO_PASSWORD.encode()):
+        return await call_next(request)
+    return Response("Password required", status_code=401,
+                    headers={"WWW-Authenticate": 'Basic realm="Pieces & Bricks demo"'})
+
+
+@app.get("/healthz")
+def healthz():
+    return {"ok": True}
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 app.mount("/output", StaticFiles(directory=OUTPUT), name="output")
 
