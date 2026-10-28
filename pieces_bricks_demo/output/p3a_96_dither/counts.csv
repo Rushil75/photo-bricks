@@ -1,0 +1,32 @@
+code,name,hex,quantity
+C33,Light Grey,#A3A9AA,1054
+C34,Mouse Grey,#6F7176,1043
+C07,Light Brown,#B37C51,897
+C38,Vanilla,#DFC790,708
+C01,Black,#302E32,572
+C04,Beige,#EBC0A4,550
+C39,Bronze,#998769,479
+C09,Dark Brown,#73483A,477
+C06,Peach,#DE9064,435
+C13,Magenta,#FD637D,415
+C05,Dark Beige,#ECA279,381
+C10,Reddish Brown,#523E37,371
+C40,Dark Grey,#4B4C50,320
+C02,White,#F7F0E3,309
+C32,Navy Blue,#7B91A5,299
+C37,Red Wine,#853433,154
+C15,Red,#CD2928,141
+C26,Dark Pink,#B72C75,127
+C25,Light Pink,#EDAAD6,101
+C08,Brown,#AB5827,84
+C20,Pink,#D85FA5,72
+C03,Light Beige,#FFD7C3,68
+C31,Olive Green,#8D8F63,63
+C21,Dark Blue,#23415D,38
+C35,Light Blue,#C1EFE3,29
+C30,Pastel Green,#749883,18
+C28,Purple,#AE78C2,4
+C29,Dark Purple,#8154AC,3
+C18,Blue,#0065B2,2
+C27,Lavender Purple,#C0AEDF,2
+TOTAL,,,9216

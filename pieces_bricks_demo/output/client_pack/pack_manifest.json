@@ -1,0 +1,1223 @@
+{
+  "built": "28 October 2026",
+  "palette_version": "photobricks-40-0b5ed2f9",
+  "results": [
+    {
+      "result": "p5_48_nodither",
+      "size": 48,
+      "settings": {
+        "size": 48,
+        "crop": null,
+        "crop_mode": "faces",
+        "face_pad": 1.6,
+        "portrait_scale": 2.8,
+        "portrait_shift": 0.35,
+        "face_select": null,
+        "work_size": 1152,
+        "upscale_min": 1000,
+        "upscale_method": "fsrcnn",
+        "denoise_h": 3.0,
+        "clahe_clip": 1.0,
+        "clahe_grid": 8,
+        "sharpen_amount": 0.25,
+        "sharpen_face_amount": 0.4,
+        "sharpen_eye_amount": 1.2,
+        "sharpen_sigma_cells": 0.6,
+        "skin_shadow_lift": 0.6,
+        "saturation": 1.06,
+        "bg_mode": "bilateral",
+        "bg_strength": 1.0,
+        "segmentation": "model",
+        "l_weight": 1.15,
+        "dither": false,
+        "dither_strength": 0.5,
+        "dither_face_strength": 0.0,
+        "dither_clamp": 10.0,
+        "skin_lock": true,
+        "skin_palette": [
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C06",
+          "C07",
+          "C08",
+          "C09",
+          "C38",
+          "C39",
+          "C37",
+          "C01",
+          "C10",
+          "C40"
+        ],
+        "eye_extra": [
+          "C21",
+          "C17",
+          "C18",
+          "C36"
+        ]
+      },
+      "source": {
+        "file": "p5_man_colour_bg.png",
+        "image_size": [
+          1438,
+          960
+        ],
+        "crop": [
+          225,
+          0,
+          960
+        ],
+        "faces": [
+          {
+            "box": [
+              578.4,
+              108.2,
+              253.5,
+              359.9
+            ],
+            "landmarks": [
+              [
+                652.8,
+                242.2
+              ],
+              [
+                765.0,
+                250.4
+              ],
+              [
+                708.8,
+                311.1
+              ],
+              [
+                655.1,
+                365.9
+              ],
+              [
+                749.0,
+                372.1
+              ]
+            ],
+            "score": 0.945
+          }
+        ],
+        "segmentation": "selfie-multiclass",
+        "engine_version": "0.1.0"
+      }
+    },
+    {
+      "result": "p4_48_nodither",
+      "size": 48,
+      "settings": {
+        "size": 48,
+        "crop": null,
+        "crop_mode": "faces",
+        "face_pad": 1.6,
+        "portrait_scale": 3.0,
+        "portrait_shift": 0.35,
+        "face_select": null,
+        "work_size": 1152,
+        "upscale_min": 1000,
+        "upscale_method": "fsrcnn",
+        "denoise_h": 3.0,
+        "clahe_clip": 1.0,
+        "clahe_grid": 8,
+        "sharpen_amount": 0.25,
+        "sharpen_face_amount": 0.4,
+        "sharpen_eye_amount": 1.2,
+        "sharpen_sigma_cells": 0.6,
+        "skin_shadow_lift": 0.6,
+        "saturation": 1.06,
+        "bg_mode": "bilateral",
+        "bg_strength": 1.0,
+        "segmentation": "model",
+        "l_weight": 1.15,
+        "dither": false,
+        "dither_strength": 0.5,
+        "dither_face_strength": 0.0,
+        "dither_clamp": 10.0,
+        "skin_lock": true,
+        "skin_palette": [
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C06",
+          "C07",
+          "C08",
+          "C09",
+          "C38",
+          "C39",
+          "C37",
+          "C01",
+          "C10",
+          "C40"
+        ],
+        "eye_extra": [
+          "C21",
+          "C17",
+          "C18",
+          "C36"
+        ]
+      },
+      "source": {
+        "file": "p4_toddler_bench.jpg",
+        "image_size": [
+          900,
+          1600
+        ],
+        "crop": [
+          154,
+          255,
+          746
+        ],
+        "faces": [
+          {
+            "box": [
+              472.0,
+              391.9,
+              207.1,
+              248.8
+            ],
+            "landmarks": [
+              [
+                532.3,
+                490.7
+              ],
+              [
+                620.1,
+                499.8
+              ],
+              [
+                575.6,
+                552.4
+              ],
+              [
+                532.2,
+                581.8
+              ],
+              [
+                600.3,
+                590.7
+              ]
+            ],
+            "score": 0.942
+          }
+        ],
+        "segmentation": "selfie-multiclass",
+        "engine_version": "0.1.0"
+      }
+    },
+    {
+      "result": "p1_48_nodither",
+      "size": 48,
+      "settings": {
+        "size": 48,
+        "crop": null,
+        "crop_mode": "faces",
+        "face_pad": 1.6,
+        "portrait_scale": 2.7,
+        "portrait_shift": 0.3,
+        "face_select": null,
+        "work_size": 1152,
+        "upscale_min": 1000,
+        "upscale_method": "fsrcnn",
+        "denoise_h": 3.0,
+        "clahe_clip": 1.0,
+        "clahe_grid": 8,
+        "sharpen_amount": 0.25,
+        "sharpen_face_amount": 0.4,
+        "sharpen_eye_amount": 1.2,
+        "sharpen_sigma_cells": 0.6,
+        "skin_shadow_lift": 0.6,
+        "saturation": 1.06,
+        "bg_mode": "bilateral",
+        "bg_strength": 1.0,
+        "segmentation": "model",
+        "l_weight": 1.15,
+        "dither": false,
+        "dither_strength": 0.5,
+        "dither_face_strength": 0.0,
+        "dither_clamp": 10.0,
+        "skin_lock": true,
+        "skin_palette": [
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C06",
+          "C07",
+          "C08",
+          "C09",
+          "C38",
+          "C39",
+          "C37",
+          "C01",
+          "C10",
+          "C40"
+        ],
+        "eye_extra": [
+          "C21",
+          "C17",
+          "C18",
+          "C36"
+        ]
+      },
+      "source": {
+        "file": "p1_girl_teddy.jpg",
+        "image_size": [
+          1848,
+          4000
+        ],
+        "crop": [
+          0,
+          848,
+          1521
+        ],
+        "faces": [
+          {
+            "box": [
+              521.0,
+              1022.2,
+              408.5,
+              563.3
+            ],
+            "landmarks": [
+              [
+                615.2,
+                1281.4
+              ],
+              [
+                809.6,
+                1285.5
+              ],
+              [
+                695.4,
+                1395.6
+              ],
+              [
+                622.9,
+                1457.2
+              ],
+              [
+                788.4,
+                1464.5
+              ]
+            ],
+            "score": 0.934
+          }
+        ],
+        "segmentation": "selfie-multiclass",
+        "engine_version": "0.1.0"
+      }
+    },
+    {
+      "result": "p2a_48_nodither",
+      "size": 48,
+      "settings": {
+        "size": 48,
+        "crop": null,
+        "crop_mode": "faces",
+        "face_pad": 2.0,
+        "portrait_scale": 2.8,
+        "portrait_shift": 0.35,
+        "face_select": null,
+        "work_size": 1152,
+        "upscale_min": 1000,
+        "upscale_method": "fsrcnn",
+        "denoise_h": 3.0,
+        "clahe_clip": 1.0,
+        "clahe_grid": 8,
+        "sharpen_amount": 0.25,
+        "sharpen_face_amount": 0.4,
+        "sharpen_eye_amount": 1.2,
+        "sharpen_sigma_cells": 0.6,
+        "skin_shadow_lift": 0.6,
+        "saturation": 1.06,
+        "bg_mode": "bilateral",
+        "bg_strength": 1.0,
+        "segmentation": "model",
+        "l_weight": 1.15,
+        "dither": false,
+        "dither_strength": 0.5,
+        "dither_face_strength": 0.0,
+        "dither_clamp": 10.0,
+        "skin_lock": true,
+        "skin_palette": [
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C06",
+          "C07",
+          "C08",
+          "C09",
+          "C38",
+          "C39",
+          "C37",
+          "C01",
+          "C10",
+          "C40"
+        ],
+        "eye_extra": [
+          "C21",
+          "C17",
+          "C18",
+          "C36"
+        ]
+      },
+      "source": {
+        "file": "p2_studio_family.png",
+        "image_size": [
+          850,
+          850
+        ],
+        "crop": [
+          0,
+          0,
+          850
+        ],
+        "faces": [
+          {
+            "box": [
+              56.6,
+              335.6,
+              125.0,
+              148.8
+            ],
+            "landmarks": [
+              [
+                104.5,
+                400.7
+              ],
+              [
+                159.4,
+                395.5
+              ],
+              [
+                145.1,
+                430.4
+              ],
+              [
+                112.0,
+                454.3
+              ],
+              [
+                158.4,
+                450.0
+              ]
+            ],
+            "score": 0.936
+          },
+          {
+            "box": [
+              195.5,
+              68.4,
+              126.3,
+              180.3
+            ],
+            "landmarks": [
+              [
+                233.3,
+                141.2
+              ],
+              [
+                289.4,
+                138.7
+              ],
+              [
+                266.7,
+                174.9
+              ],
+              [
+                239.2,
+                198.4
+              ],
+              [
+                291.5,
+                196.4
+              ]
+            ],
+            "score": 0.925
+          },
+          {
+            "box": [
+              359.9,
+              116.4,
+              90.0,
+              115.6
+            ],
+            "landmarks": [
+              [
+                377.9,
+                165.4
+              ],
+              [
+                420.2,
+                165.1
+              ],
+              [
+                394.0,
+                188.2
+              ],
+              [
+                380.6,
+                202.8
+              ],
+              [
+                415.6,
+                202.9
+              ]
+            ],
+            "score": 0.931
+          },
+          {
+            "box": [
+              503.9,
+              164.0,
+              105.2,
+              142.0
+            ],
+            "landmarks": [
+              [
+                528.2,
+                221.8
+              ],
+              [
+                578.7,
+                215.2
+              ],
+              [
+                554.7,
+                247.0
+              ],
+              [
+                536.9,
+                270.3
+              ],
+              [
+                583.4,
+                265.0
+              ]
+            ],
+            "score": 0.943
+          },
+          {
+            "box": [
+              669.2,
+              266.7,
+              113.9,
+              131.2
+            ],
+            "landmarks": [
+              [
+                701.4,
+                314.3
+              ],
+              [
+                754.9,
+                315.7
+              ],
+              [
+                726.6,
+                341.2
+              ],
+              [
+                703.0,
+                362.7
+              ],
+              [
+                748.3,
+                364.1
+              ]
+            ],
+            "score": 0.934
+          }
+        ],
+        "segmentation": "selfie-multiclass",
+        "engine_version": "0.1.0"
+      }
+    },
+    {
+      "result": "p2a_96_nodither",
+      "size": 96,
+      "settings": {
+        "size": 96,
+        "crop": null,
+        "crop_mode": "faces",
+        "face_pad": 2.0,
+        "portrait_scale": 2.8,
+        "portrait_shift": 0.35,
+        "face_select": null,
+        "work_size": 1152,
+        "upscale_min": 1000,
+        "upscale_method": "fsrcnn",
+        "denoise_h": 3.0,
+        "clahe_clip": 1.0,
+        "clahe_grid": 8,
+        "sharpen_amount": 0.25,
+        "sharpen_face_amount": 0.4,
+        "sharpen_eye_amount": 1.2,
+        "sharpen_sigma_cells": 0.6,
+        "skin_shadow_lift": 0.6,
+        "saturation": 1.06,
+        "bg_mode": "bilateral",
+        "bg_strength": 1.0,
+        "segmentation": "model",
+        "l_weight": 1.15,
+        "dither": false,
+        "dither_strength": 0.5,
+        "dither_face_strength": 0.0,
+        "dither_clamp": 10.0,
+        "skin_lock": true,
+        "skin_palette": [
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C06",
+          "C07",
+          "C08",
+          "C09",
+          "C38",
+          "C39",
+          "C37",
+          "C01",
+          "C10",
+          "C40"
+        ],
+        "eye_extra": [
+          "C21",
+          "C17",
+          "C18",
+          "C36"
+        ]
+      },
+      "source": {
+        "file": "p2_studio_family.png",
+        "image_size": [
+          850,
+          850
+        ],
+        "crop": [
+          0,
+          0,
+          850
+        ],
+        "faces": [
+          {
+            "box": [
+              56.6,
+              335.6,
+              125.0,
+              148.8
+            ],
+            "landmarks": [
+              [
+                104.5,
+                400.7
+              ],
+              [
+                159.4,
+                395.5
+              ],
+              [
+                145.1,
+                430.4
+              ],
+              [
+                112.0,
+                454.3
+              ],
+              [
+                158.4,
+                450.0
+              ]
+            ],
+            "score": 0.936
+          },
+          {
+            "box": [
+              195.5,
+              68.4,
+              126.3,
+              180.3
+            ],
+            "landmarks": [
+              [
+                233.3,
+                141.2
+              ],
+              [
+                289.4,
+                138.7
+              ],
+              [
+                266.7,
+                174.9
+              ],
+              [
+                239.2,
+                198.4
+              ],
+              [
+                291.5,
+                196.4
+              ]
+            ],
+            "score": 0.925
+          },
+          {
+            "box": [
+              359.9,
+              116.4,
+              90.0,
+              115.6
+            ],
+            "landmarks": [
+              [
+                377.9,
+                165.4
+              ],
+              [
+                420.2,
+                165.1
+              ],
+              [
+                394.0,
+                188.2
+              ],
+              [
+                380.6,
+                202.8
+              ],
+              [
+                415.6,
+                202.9
+              ]
+            ],
+            "score": 0.931
+          },
+          {
+            "box": [
+              503.9,
+              164.0,
+              105.2,
+              142.0
+            ],
+            "landmarks": [
+              [
+                528.2,
+                221.8
+              ],
+              [
+                578.7,
+                215.2
+              ],
+              [
+                554.7,
+                247.0
+              ],
+              [
+                536.9,
+                270.3
+              ],
+              [
+                583.4,
+                265.0
+              ]
+            ],
+            "score": 0.943
+          },
+          {
+            "box": [
+              669.2,
+              266.7,
+              113.9,
+              131.2
+            ],
+            "landmarks": [
+              [
+                701.4,
+                314.3
+              ],
+              [
+                754.9,
+                315.7
+              ],
+              [
+                726.6,
+                341.2
+              ],
+              [
+                703.0,
+                362.7
+              ],
+              [
+                748.3,
+                364.1
+              ]
+            ],
+            "score": 0.934
+          }
+        ],
+        "segmentation": "selfie-multiclass",
+        "engine_version": "0.1.0"
+      }
+    },
+    {
+      "result": "p3a_48_nodither",
+      "size": 48,
+      "settings": {
+        "size": 48,
+        "crop": null,
+        "crop_mode": "faces",
+        "face_pad": 1.0,
+        "portrait_scale": 2.8,
+        "portrait_shift": 0.35,
+        "face_select": null,
+        "work_size": 1152,
+        "upscale_min": 1000,
+        "upscale_method": "fsrcnn",
+        "denoise_h": 3.0,
+        "clahe_clip": 1.0,
+        "clahe_grid": 8,
+        "sharpen_amount": 0.25,
+        "sharpen_face_amount": 0.4,
+        "sharpen_eye_amount": 1.2,
+        "sharpen_sigma_cells": 0.6,
+        "skin_shadow_lift": 0.6,
+        "saturation": 1.06,
+        "bg_mode": "bilateral",
+        "bg_strength": 1.8,
+        "segmentation": "model",
+        "l_weight": 1.15,
+        "dither": false,
+        "dither_strength": 0.5,
+        "dither_face_strength": 0.0,
+        "dither_clamp": 10.0,
+        "skin_lock": true,
+        "skin_palette": [
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C06",
+          "C07",
+          "C08",
+          "C09",
+          "C38",
+          "C39",
+          "C37",
+          "C01",
+          "C10",
+          "C40"
+        ],
+        "eye_extra": [
+          "C21",
+          "C17",
+          "C18",
+          "C36"
+        ]
+      },
+      "source": {
+        "file": "p3_birthday_family.jpg",
+        "image_size": [
+          720,
+          1280
+        ],
+        "crop": [
+          0,
+          211,
+          720
+        ],
+        "faces": [
+          {
+            "box": [
+              174.4,
+              610.7,
+              93.6,
+              118.9
+            ],
+            "landmarks": [
+              [
+                200.5,
+                657.8
+              ],
+              [
+                243.9,
+                658.6
+              ],
+              [
+                222.2,
+                683.7
+              ],
+              [
+                200.1,
+                697.6
+              ],
+              [
+                237.0,
+                700.2
+              ]
+            ],
+            "score": 0.93
+          },
+          {
+            "box": [
+              183.0,
+              240.7,
+              101.8,
+              141.2
+            ],
+            "landmarks": [
+              [
+                213.1,
+                295.7
+              ],
+              [
+                263.5,
+                301.2
+              ],
+              [
+                237.8,
+                325.3
+              ],
+              [
+                208.7,
+                342.3
+              ],
+              [
+                256.0,
+                347.6
+              ]
+            ],
+            "score": 0.943
+          },
+          {
+            "box": [
+              318.8,
+              445.1,
+              67.1,
+              88.9
+            ],
+            "landmarks": [
+              [
+                344.2,
+                482.1
+              ],
+              [
+                372.4,
+                482.7
+              ],
+              [
+                362.0,
+                499.7
+              ],
+              [
+                345.8,
+                511.9
+              ],
+              [
+                369.4,
+                512.5
+              ]
+            ],
+            "score": 0.926
+          },
+          {
+            "box": [
+              424.0,
+              355.4,
+              90.1,
+              116.4
+            ],
+            "landmarks": [
+              [
+                444.2,
+                396.7
+              ],
+              [
+                484.9,
+                396.3
+              ],
+              [
+                461.6,
+                421.1
+              ],
+              [
+                447.7,
+                440.4
+              ],
+              [
+                483.7,
+                440.0
+              ]
+            ],
+            "score": 0.928
+          },
+          {
+            "box": [
+              502.6,
+              696.2,
+              93.2,
+              122.3
+            ],
+            "landmarks": [
+              [
+                537.5,
+                749.9
+              ],
+              [
+                577.2,
+                747.6
+              ],
+              [
+                566.0,
+                773.9
+              ],
+              [
+                542.1,
+                789.5
+              ],
+              [
+                574.5,
+                788.3
+              ]
+            ],
+            "score": 0.922
+          }
+        ],
+        "segmentation": "selfie-multiclass",
+        "engine_version": "0.1.0"
+      }
+    },
+    {
+      "result": "p3a_96_nodither",
+      "size": 96,
+      "settings": {
+        "size": 96,
+        "crop": null,
+        "crop_mode": "faces",
+        "face_pad": 1.0,
+        "portrait_scale": 2.8,
+        "portrait_shift": 0.35,
+        "face_select": null,
+        "work_size": 1152,
+        "upscale_min": 1000,
+        "upscale_method": "fsrcnn",
+        "denoise_h": 3.0,
+        "clahe_clip": 1.0,
+        "clahe_grid": 8,
+        "sharpen_amount": 0.25,
+        "sharpen_face_amount": 0.4,
+        "sharpen_eye_amount": 1.2,
+        "sharpen_sigma_cells": 0.6,
+        "skin_shadow_lift": 0.6,
+        "saturation": 1.06,
+        "bg_mode": "bilateral",
+        "bg_strength": 1.8,
+        "segmentation": "model",
+        "l_weight": 1.15,
+        "dither": false,
+        "dither_strength": 0.5,
+        "dither_face_strength": 0.0,
+        "dither_clamp": 10.0,
+        "skin_lock": true,
+        "skin_palette": [
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C06",
+          "C07",
+          "C08",
+          "C09",
+          "C38",
+          "C39",
+          "C37",
+          "C01",
+          "C10",
+          "C40"
+        ],
+        "eye_extra": [
+          "C21",
+          "C17",
+          "C18",
+          "C36"
+        ]
+      },
+      "source": {
+        "file": "p3_birthday_family.jpg",
+        "image_size": [
+          720,
+          1280
+        ],
+        "crop": [
+          0,
+          211,
+          720
+        ],
+        "faces": [
+          {
+            "box": [
+              174.4,
+              610.7,
+              93.6,
+              118.9
+            ],
+            "landmarks": [
+              [
+                200.5,
+                657.8
+              ],
+              [
+                243.9,
+                658.6
+              ],
+              [
+                222.2,
+                683.7
+              ],
+              [
+                200.1,
+                697.6
+              ],
+              [
+                237.0,
+                700.2
+              ]
+            ],
+            "score": 0.93
+          },
+          {
+            "box": [
+              183.0,
+              240.7,
+              101.8,
+              141.2
+            ],
+            "landmarks": [
+              [
+                213.1,
+                295.7
+              ],
+              [
+                263.5,
+                301.2
+              ],
+              [
+                237.8,
+                325.3
+              ],
+              [
+                208.7,
+                342.3
+              ],
+              [
+                256.0,
+                347.6
+              ]
+            ],
+            "score": 0.943
+          },
+          {
+            "box": [
+              318.8,
+              445.1,
+              67.1,
+              88.9
+            ],
+            "landmarks": [
+              [
+                344.2,
+                482.1
+              ],
+              [
+                372.4,
+                482.7
+              ],
+              [
+                362.0,
+                499.7
+              ],
+              [
+                345.8,
+                511.9
+              ],
+              [
+                369.4,
+                512.5
+              ]
+            ],
+            "score": 0.926
+          },
+          {
+            "box": [
+              424.0,
+              355.4,
+              90.1,
+              116.4
+            ],
+            "landmarks": [
+              [
+                444.2,
+                396.7
+              ],
+              [
+                484.9,
+                396.3
+              ],
+              [
+                461.6,
+                421.1
+              ],
+              [
+                447.7,
+                440.4
+              ],
+              [
+                483.7,
+                440.0
+              ]
+            ],
+            "score": 0.928
+          },
+          {
+            "box": [
+              502.6,
+              696.2,
+              93.2,
+              122.3
+            ],
+            "landmarks": [
+              [
+                537.5,
+                749.9
+              ],
+              [
+                577.2,
+                747.6
+              ],
+              [
+                566.0,
+                773.9
+              ],
+              [
+                542.1,
+                789.5
+              ],
+              [
+                574.5,
+                788.3
+              ]
+            ],
+            "score": 0.922
+          }
+        ],
+        "segmentation": "selfie-multiclass",
+        "engine_version": "0.1.0"
+      }
+    }
+  ]
+}

@@ -46,7 +46,7 @@ def run(photo, settings: Settings | dict | None = None, palette: Palette | None 
     in_crop = [f for f in faces if _inside(f, crop)]
     fmask = pp.face_mask(work.shape, in_crop, crop, scale)
     emask = pp.eye_mask(work.shape, in_crop, crop, scale)
-    cats = pp.segment(work) if st.segmentation == "mediapipe" else None
+    cats = pp.segment(work) if st.segmentation == "model" else None
     pmask = pp.person_mask(work, fmask, st, cats)
     if cats is not None:  # face skin (3) + body skin (2)
         skin = cv2.GaussianBlur(np.isin(cats, (2, 3)).astype(np.float32), (0, 0), work.shape[0] / st.size / 3)
@@ -68,7 +68,7 @@ def run(photo, settings: Settings | dict | None = None, palette: Palette | None 
         "image_size": [int(rgb.shape[1]), int(rgb.shape[0])],
         "crop": crop,
         "faces": [f.to_json() for f in faces],
-        "segmentation": "mediapipe" if cats is not None else "face-boxes",
+        "segmentation": "selfie-multiclass" if cats is not None else "face-boxes",
         "engine_version": ENGINE_VERSION,
     }
     return Result(matrix, st, palette, source, crop_rgb, img)

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import cv2
 import numpy as np
-from skimage.color import deltaE_ciede2000, rgb2lab
+from .color import deltaE_ciede2000, rgb2lab
 
 from .palette import Palette
 from .settings import Settings

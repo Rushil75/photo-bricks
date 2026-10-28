@@ -40,8 +40,12 @@ async function init() {
   $("file").onchange = e => {
     const f = e.target.files[0]; if (!f) return;
     document.querySelectorAll(".samples button").forEach(x => x.classList.remove("on"));
-    const fd = new FormData(); fd.append("file", f);
-    loadImage(() => api("/api/upload", { method: "POST", body: fd }));
+    loadImage(async () => {
+      const blob = await shrinkPhoto(f);
+      const fd = new FormData(); fd.append("file", blob, f.name);
+      const meta = await api("/api/detect", { method: "POST", body: fd });
+      return { ...meta, blob, name: f.name, display_url: URL.createObjectURL(blob) };
+    });
   };
   $("generate").onclick = generate;
   $("autoCrop").onclick = () => setCrop(S.image.suggested_crop);
@@ -85,10 +89,25 @@ function buildSizes() {
   };
 }
 
+// Uploads are capped at 2000 px (as an oriented JPEG) before leaving the browser: serverless
+// hosts limit request bodies to ~4.5 MB, and the engine works at 1152 px anyway.
+const MAX_UPLOAD_SIDE = 2000;
+async function shrinkPhoto(file) {
+  const bmp = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const k = Math.min(1, MAX_UPLOAD_SIDE / Math.max(bmp.width, bmp.height));
+  const cv = document.createElement("canvas");
+  cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+  const g = cv.getContext("2d");
+  g.imageSmoothingQuality = "high";
+  g.drawImage(bmp, 0, 0, cv.width, cv.height);
+  return new Promise(res => cv.toBlob(res, "image/jpeg", 0.92));
+}
+
 // ------------------------------------------------------------- crop
 async function loadImage(fetcher) {
   busy(true, "Detecting faces…");
   try {
+    if (S.image?.blob) URL.revokeObjectURL(S.image.display_url);
     S.image = await fetcher();
     S.img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = S.image.display_url; });
     $("cropCard").hidden = $("genCard").hidden = false;
@@ -151,10 +170,11 @@ async function generate() {
   if (!S.image) return;
   busy(true, `Building ${S.size}×${S.size} mosaic…`);
   try {
-    const r = await api("/api/convert", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ image_id: S.image.image_id, size: S.size, crop: S.crop, dither: $("dither").checked }),
-    });
+    // Stateless: each request carries the photo itself, or the sample's name.
+    const fd = new FormData();
+    fd.append("params", JSON.stringify({ sample: S.image.sample || null, size: S.size, crop: S.crop, dither: $("dither").checked }));
+    if (!S.image.sample) fd.append("file", S.image.blob, S.image.name);
+    const r = await api("/api/convert", { method: "POST", body: fd });
     S.result = r;
     S.grid = r.grid.map(row => [...row]);
     S.original = r.grid.map(row => [...row]);

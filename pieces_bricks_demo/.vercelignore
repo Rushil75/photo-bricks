@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+tests/
+tools/
+uploads/
+models/experimental/
+models/selfie_segmenter.tflite
+output/client_pack/
+Dockerfile
+.dockerignore
