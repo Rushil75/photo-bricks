@@ -1,0 +1,45 @@
+# Client pack: which result goes in, in what order. Edit after internal review, then run:
+#   .venv/bin/python make_pack.py
+# `result` is a folder name in output/. `note` is a short plain-language line shown under the preview.
+
+title: Your photos as brick mosaics
+client: Khaled Maroun · PIECES & BRICKS
+prepared_by: Softradix
+
+photos:
+  - result: p5_48_nodither
+    title: Portrait with colour background
+    note: Clean, bold colours. The eyes and brows read clearly even at 48 × 48.
+
+  - result: p4_48_nodither
+    title: Toddler on the bench
+    note: A soft-focus photo; we sharpened the face before converting so the eyes stay visible.
+
+  - result: p1_48_nodither
+    title: Girl with her teddy
+    note: Cropped to her face, the teddy and the top of the drawing.
+
+  - result: p2a_48_nodither
+    title: Studio family of five
+    note: Five faces on one 48 × 48 board, so each face is only 6–7 bricks wide.
+
+  - result: p2a_96_nodither
+    title: Studio family of five, larger board
+    note: The same photo at 96 × 96. Group photos gain a lot from a bigger board.
+
+  - result: p3a_48_nodither
+    title: Birthday family
+    note: "The hardest photo: small faces and a busy background, which we simplified."
+
+  - result: p3a_96_nodither
+    title: Birthday family, larger board
+    note: At 96 × 96 every face becomes recognisable.
+
+confirmed:
+  - "Board: 48 × 48 mosaic with 2,304 single-colour positions, for the best facial clarity."
+  - "Shape: square boards only, so every photo is cropped to a square."
+
+open_questions:
+  - "Physical size: how big is the finished mosaic in cm? This sets the exact proportions of the preview."
+  - "Colours: were the 40 HEX values measured from real bricks, or taken from a supplier catalogue? Measured values give the most faithful results."
+  - "Sizes: which sizes besides 48 × 48 do you plan to sell?"

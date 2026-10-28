@@ -1,0 +1,12 @@
+numpy
+opencv-contrib-python-headless>=4.8
+scikit-image
+pillow>=10.1
+pyyaml
+mediapipe
+fastapi
+uvicorn[standard]
+python-multipart
+pytest
+openpyxl
+reportlab

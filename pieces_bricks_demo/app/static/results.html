@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pieces & Bricks · Demo Results</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo"></span>PIECES &amp; BRICKS <small>Mosaic Studio · demo</small></div>
+  <nav><a href="/">Studio</a><a href="/results" class="on">Demo results</a></nav>
+</header>
+<main class="results">
+  <h1>Demo results</h1>
+  <p class="lead">Each photo converted with the 40-colour palette, with and without dithering. Every file below is
+    generated from the result's <code>matrix.json</code>, and brick counts always add up to the full grid.</p>
+  <div id="list"></div>
+</main>
+<script>
+(async () => {
+  const items = await (await fetch("/api/results")).json();
+  const list = document.getElementById("list");
+  if (!items.length) { list.innerHTML = '<p class="lead">No results yet. Run <code>python run_demo.py</code> first.</p>'; return; }
+  const groups = {};
+  for (const it of items) (groups[`${it.photo}_${it.size}`] ??= []).push(it);
+  for (const g of Object.values(groups)) g.sort((a, b) => (a.variant === "dither") - (b.variant === "dither"));
+  const order = ["p5", "p4", "p1", "p2a", "p2b", "p3a", "p3b"];
+  const keys = Object.keys(groups).sort((a, b) => {
+    const [pa, sa] = a.split("_"), [pb, sb] = b.split("_");
+    return (order.indexOf(pa) - order.indexOf(pb)) || (sa - sb);
+  });
+  list.innerHTML = keys.map(k => {
+    const vs = groups[k], first = vs[0], n = first.size;
+    return `<section class="rcard">
+      <h2>${first.photo.toUpperCase()} · ${first.label} · ${n}×${n}</h2>
+      ${first.compare ? `<a href="${first.compare}" target="_blank"><img class="compare" loading="lazy" src="${first.compare}" alt=""></a>` : ""}
+      <div class="variants">${vs.map(v => {
+        const base = `/output/${v.id}`, total = v.counts.reduce((s, c) => s + c.quantity, 0);
+        return `<div class="variant">
+          <h3>${v.variant === "dither" ? "Dithering" : "No dithering"} · ${v.counts.length} colours · ${total.toLocaleString()} bricks</h3>
+          <div class="links">
+            <a href="${base}/preview.png" target="_blank">preview.png</a>
+            <a href="${base}/flat.png" target="_blank">flat.png</a>
+            <a href="${base}/grid.png" target="_blank">grid.png</a>
+            <a href="${base}/counts.csv" target="_blank">counts.csv</a>
+            <a href="${base}/matrix.json" target="_blank">matrix.json</a>
+          </div>
+          <div class="bar">${v.counts.map(c => `<span title="${c.code} ${c.name}: ${c.quantity}" style="flex:${c.quantity};background:${c.hex}"></span>`).join("")}</div>
+          <div class="chips">${v.counts.slice(0, 8).map(c => `<span><i style="background:${c.hex}"></i>${c.code} ${c.quantity}</span>`).join("")}</div>
+        </div>`;
+      }).join("")}</div>
+    </section>`;
+  }).join("");
+})();
+</script>
+</body>
+</html>

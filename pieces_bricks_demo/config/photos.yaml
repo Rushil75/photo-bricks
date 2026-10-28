@@ -1,0 +1,54 @@
+# Per-photo crop plan and settings. Anything under `settings` overrides engine/settings.py defaults.
+# Faces are numbered left to right (face_select), as detected by YuNet.
+
+p5:
+  file: p5_man_colour_bg.png
+  label: Man, colour background
+  sizes: [48]
+  settings: {}
+
+p4:
+  file: p4_toddler_bench.jpg
+  label: Toddler on bench
+  sizes: [48]
+  settings:
+    portrait_scale: 3.0
+
+p1:
+  file: p1_girl_teddy.jpg
+  label: Girl with teddy
+  sizes: [48]
+  settings:
+    portrait_scale: 2.7
+    portrait_shift: 0.30
+
+p2a:
+  file: p2_studio_family.png
+  label: Studio family, full
+  sizes: [48, 96]
+  settings:
+    face_pad: 2.0
+
+p2b:
+  file: p2_studio_family.png
+  label: Studio family, centre faces
+  sizes: [48]
+  settings:
+    face_select: [1, 2, 3]
+    face_pad: 0.5
+
+p3a:
+  file: p3_birthday_family.jpg
+  label: Birthday family, full
+  sizes: [48, 96]
+  settings:
+    face_pad: 1.0
+    bg_strength: 1.8
+
+p3b:
+  file: p3_birthday_family.jpg
+  label: Birthday family, faces
+  sizes: [48]
+  settings:
+    face_pad: 0.35
+    bg_strength: 1.8
