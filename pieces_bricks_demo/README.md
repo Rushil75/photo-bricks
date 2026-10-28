@@ -5,10 +5,10 @@ Turns a photo into an N×N brick mosaic using only the client's 40 colours (C01�
 ## Setup
 
 ```bash
-uv venv -p 3.12 .venv && uv pip install -p .venv/bin/python -r requirements.txt
+uv venv -p 3.12 .venv && uv pip install -p .venv/bin/python -r requirements-dev.txt
 ```
 
-The model files are in `models/`: YuNet face detector, MediaPipe multiclass selfie segmenter, and FSRCNN x2/x3/x4 super-resolution.
+The model files are in `models/`: YuNet face detector, MediaPipe selfie-multiclass segmenter (run with LiteRT), and FSRCNN x2/x3/x4 super-resolution.
 
 ## Phase 1: offline results
 
@@ -44,17 +44,21 @@ and the open questions. `output/client_pack/pack_manifest.json` records the exac
   counts, and download a pack (zip of the 5 files, re-rendered from the edited matrix).
   `/?sample=p5_man_colour_bg.png&size=48` opens straight into a result.
 - `/results`: gallery of the batch results from `run_demo.py`.
-- API: `POST /api/upload`, `POST /api/convert`, `POST /api/export`, `GET /api/palette`, `GET /api/results`.
+- API: `POST /api/detect`, `POST /api/convert` (multipart: `params` JSON + `file`, or a `sample` name),
+  `POST /api/export`, `GET /api/palette`, `GET /api/results`. The app is stateless: nothing is written to disk.
 
-## Deploying (Render)
+## Deploying
 
-`render.yaml` (repo root) deploys this folder as a Docker web service. In Render: **New → Blueprint**, pick the
-repo, and enter a `DEMO_PASSWORD` when asked. The Docker build installs the pinned versions from
-`requirements-deploy.txt` and generates the 18 demo results for `/results`.
+**Vercel (Hobby/free):** import the repo, Root Directory `pieces_bricks_demo`, preset FastAPI (finds `app/main.py`),
+install command `pip install -r requirements.txt`, and add a `DEMO_PASSWORD` environment variable.
+`.vercelignore` keeps the bundle small; the 18 demo results ship from the committed `output/` folder.
 
-- Plan: **Standard (2 GB)**. A conversion needs about 1 GB of memory, so the 512 MB free and starter plans will crash.
-- With `DEMO_PASSWORD` set, the browser asks for a password once (any username). `/healthz` stays open for Render.
-- Uploaded photos live on the server's disk and are lost on each redeploy, which is fine for a demo.
+**Docker / Render:** the `Dockerfile` runs the same app; `render.yaml` (repo root) sets up a Render web service.
+
+- With `DEMO_PASSWORD` set, the browser asks for a password once (any username). `/healthz` stays open.
+- A conversion peaks at about 500 MB of memory. Uploads are shrunk to 2000 px in the browser first (Vercel limits
+  request bodies to 4.5 MB).
+- After changing the engine, run `python run_demo.py` and commit `output/` so the deployed gallery matches.
 
 ## Layout
 
@@ -70,7 +74,7 @@ tests/       palette-only, counts, determinism, rendered-from-matrix
 
 - The pipeline follows the brief's 8 steps. The face-specific additions below are all settings in `engine/settings.py`.
 - **Skin shadow lift** (`skin_shadow_lift`): the palette has no mid-dark pinkish skin tone, so shadowed jaws and
-  necks were matching C09/C10/C37 and looked like a beard. Shadows inside the MediaPipe skin mask are lifted towards
+  necks were matching C09/C10/C37 and looked like a beard. Shadows inside the segmenter's skin mask are lifted towards
   the median skin tone. Eye areas are excluded.
 - **Skin lock** (`skin_lock`, `skin_palette`, `eye_extra`): skin cells may only use skin tones (C02–C09, C38, C39),
   C37 for lips and C01/C10/C40 for brows. Cells at the YuNet eye landmarks may also use blues for eye colour. This

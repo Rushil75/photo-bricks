@@ -1,0 +1,41 @@
+code,name,hex,quantity
+C35,Light Blue,#C1EFE3,325
+C36,Sky Blue,#93BCE6,298
+C11,Neon Blue,#00B5CC,250
+C03,Light Beige,#FFD7C3,117
+C23,Green,#00A64D,116
+C25,Light Pink,#EDAAD6,115
+C01,Black,#302E32,103
+C12,Yellow,#FFD300,96
+C05,Dark Beige,#ECA279,84
+C04,Beige,#EBC0A4,78
+C19,Light Yellow,#FFF076,60
+C22,Lime,#9CBB27,59
+C09,Dark Brown,#73483A,58
+C21,Dark Blue,#23415D,49
+C06,Peach,#DE9064,46
+C10,Reddish Brown,#523E37,46
+C07,Light Brown,#B37C51,40
+C24,Dark Green,#1A4D3B,33
+C02,White,#F7F0E3,32
+C18,Blue,#0065B2,29
+C32,Navy Blue,#7B91A5,29
+C34,Mouse Grey,#6F7176,29
+C20,Pink,#D85FA5,26
+C16,Light Orange,#FFAE11,25
+C31,Olive Green,#8D8F63,24
+C08,Brown,#AB5827,23
+C33,Light Grey,#A3A9AA,21
+C40,Dark Grey,#4B4C50,17
+C37,Red Wine,#853433,16
+C28,Purple,#AE78C2,11
+C30,Pastel Green,#749883,9
+C27,Lavender Purple,#C0AEDF,8
+C39,Bronze,#998769,8
+C26,Dark Pink,#B72C75,7
+C38,Vanilla,#DFC790,6
+C17,Medium Blue,#58A3DA,5
+C13,Magenta,#FD637D,3
+C15,Red,#CD2928,2
+C29,Dark Purple,#8154AC,1
+TOTAL,,,2304

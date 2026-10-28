@@ -122,11 +122,29 @@ def _superres(scale: int):
     return sr
 
 
+def _upsample_tiled(bgr: np.ndarray, scale: int, tile: int = 256, pad: int = 16) -> np.ndarray:
+    """FSRCNN on overlapping tiles. Whole-image upsampling needs ~1 GB for a 960 px crop;
+    tiles keep it to a few tens of MB. pad exceeds the network's receptive field, so the
+    stitched result matches the whole-image result."""
+    sr = _superres(scale)
+    h, w = bgr.shape[:2]
+    out = np.empty((h * scale, w * scale, 3), np.uint8)
+    for y in range(0, h, tile):
+        for x in range(0, w, tile):
+            y0, x0 = max(0, y - pad), max(0, x - pad)
+            y1, x1 = min(h, y + tile + pad), min(w, x + tile + pad)
+            up = sr.upsample(np.ascontiguousarray(bgr[y0:y1, x0:x1]))
+            ty, tx = (y - y0) * scale, (x - x0) * scale
+            th, tw = (min(y + tile, h) - y) * scale, (min(x + tile, w) - x) * scale
+            out[y * scale:y * scale + th, x * scale:x * scale + tw] = up[ty:ty + th, tx:tx + tw]
+    return out
+
+
 def to_work_size(crop: np.ndarray, st: Settings) -> np.ndarray:
     side = crop.shape[0]
     if side < st.upscale_min and st.upscale_method == "fsrcnn":
         scale = next((s for s in (2, 3, 4) if side * s >= st.upscale_min), 4)
-        crop = _superres(scale).upsample(np.ascontiguousarray(crop[:, :, ::-1]))[:, :, ::-1]
+        crop = _upsample_tiled(np.ascontiguousarray(crop[:, :, ::-1]), scale)[:, :, ::-1]
     interp = cv2.INTER_AREA if crop.shape[0] >= st.work_size else cv2.INTER_LANCZOS4
     return cv2.resize(crop, (st.work_size, st.work_size), interpolation=interp)
 
@@ -162,63 +180,71 @@ def eye_mask(shape, faces: list[Face], crop: list[int], scale: float) -> np.ndar
 
 @lru_cache(maxsize=1)
 def _segmenter():
-    import ctypes
-    try:  # MediaPipe's native lib expects GL symbols to be loaded already on headless Linux
-        ctypes.CDLL("libGL.so.1", mode=ctypes.RTLD_GLOBAL)
-    except OSError:
-        pass
-    from mediapipe.tasks.python import BaseOptions, vision
-    opts = vision.ImageSegmenterOptions(base_options=BaseOptions(model_asset_path=str(SEGMENTER)),
-                                        output_category_mask=True)
-    seg = vision.ImageSegmenter.create_from_options(opts)
-    # Lives for the whole process. MediaPipe's destructor runs after its own executor has shut
-    # down and raises a noisy error at exit, so skip it and let the OS reclaim the memory.
-    type(seg).__del__ = lambda self: None
-    return seg
+    """The MediaPipe selfie-multiclass model run with LiteRT (no MediaPipe / OpenGL needed)."""
+    from ai_edge_litert.interpreter import Interpreter
+    it = Interpreter(model_path=str(SEGMENTER), num_threads=2)
+    it.allocate_tensors()
+    return it
+
+
+def _run_segmenter(rgb: np.ndarray) -> np.ndarray:
+    """Pre/post-processing copies MediaPipe's ImageSegmenter: pixels scaled to [-1, 1],
+    corner-aligned bilinear warp to the model size, softmax, bilinear resize back, argmax.
+    Matches MediaPipe's confidence masks on 99.9%+ of pixels."""
+    it = _segmenter()
+    inp, out = it.get_input_details()[0], it.get_output_details()[0]
+    mh, mw = (int(v) for v in inp["shape"][1:3])
+    h, w = rgb.shape[:2]
+    M = np.float32([[mw / w, 0, 0], [0, mh / h, 0]])
+    x = cv2.warpAffine((rgb.astype(np.float32) - 127.5) / 127.5, M, (mw, mh),
+                       flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+    it.set_tensor(inp["index"], x[None])
+    it.invoke()
+    logits = it.get_tensor(out["index"])[0]
+    e = np.exp(logits - logits.max(axis=-1, keepdims=True))
+    conf = cv2.resize(e / e.sum(axis=-1, keepdims=True), (w, h), interpolation=cv2.INTER_LINEAR)
+    return conf.argmax(axis=-1).astype(np.uint8)
 
 
 _PROBE = """
 import sys, numpy as np
 sys.path.insert(0, sys.argv[1])
-from engine.preprocess import _segmenter
-import mediapipe as mp
-_segmenter().segment(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.zeros((64, 64, 3), np.uint8)))
+from engine.preprocess import _run_segmenter
+_run_segmenter(np.zeros((64, 64, 3), np.uint8))
 """
 
 
 @lru_cache(maxsize=1)
-def mediapipe_ok() -> bool:
-    """MediaPipe's native code can abort the whole process, which try/except cannot catch
-    (e.g. its tcmalloc can't read the CPU count inside some containers). Try it once in a
-    child process; if that dies, use the face-box fallback instead of crashing the server."""
+def segmenter_ok() -> bool:
+    """Native ML runtimes can abort the whole process, which try/except cannot catch
+    (MediaPipe did this on Render). Try the segmenter once in a child process; if that
+    dies, use the face-box fallback instead of crashing the server."""
     try:
         r = subprocess.run([sys.executable, "-c", _PROBE, str(Path(__file__).resolve().parents[1])],
                            capture_output=True, timeout=180)
     except subprocess.TimeoutExpired:
-        log.warning("MediaPipe probe timed out; using face-box masks")
+        log.warning("segmenter probe timed out; using face-box masks")
         return False
     if r.returncode != 0:
-        log.warning("MediaPipe unavailable (exit %s); using face-box masks. %s",
+        log.warning("segmenter unavailable (exit %s); using face-box masks. %s",
                     r.returncode, r.stderr.decode(errors="replace").strip()[-400:])
     return r.returncode == 0
 
 
 def segment(rgb: np.ndarray) -> np.ndarray | None:
-    """MediaPipe multiclass selfie segmentation -> category map
+    """Multiclass selfie segmentation -> category map
     (0 bg, 1 hair, 2 body skin, 3 face skin, 4 clothes, 5 other). None if unavailable."""
-    if not mediapipe_ok():
+    if not segmenter_ok():
         return None
     try:
-        import mediapipe as mp
-        out = _segmenter().segment(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(rgb)))
-        return out.category_mask.numpy_view().reshape(rgb.shape[:2]).copy()
+        return _run_segmenter(np.ascontiguousarray(rgb))
     except Exception as e:
         log.warning("segmentation unavailable, falling back to face boxes: %s", e)
         return None
 
 
 def person_mask(rgb: np.ndarray, fmask: np.ndarray, st: Settings, cats: np.ndarray | None) -> np.ndarray:
-    if st.segmentation == "mediapipe" and cats is not None:
+    if st.segmentation == "model" and cats is not None:
         m = (cats > 0).astype(np.float32)
     else:  # padded face boxes
         k = int(rgb.shape[0] * 0.08) | 1

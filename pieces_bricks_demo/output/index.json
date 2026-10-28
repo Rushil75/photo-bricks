@@ -1,0 +1,128 @@
+[
+  {
+    "id": "p1_48_dither",
+    "photo": "p1",
+    "size": 48,
+    "variant": "dither",
+    "label": "Girl with teddy"
+  },
+  {
+    "id": "p1_48_nodither",
+    "photo": "p1",
+    "size": 48,
+    "variant": "nodither",
+    "label": "Girl with teddy"
+  },
+  {
+    "id": "p2a_48_dither",
+    "photo": "p2a",
+    "size": 48,
+    "variant": "dither",
+    "label": "Studio family, full"
+  },
+  {
+    "id": "p2a_48_nodither",
+    "photo": "p2a",
+    "size": 48,
+    "variant": "nodither",
+    "label": "Studio family, full"
+  },
+  {
+    "id": "p2a_96_dither",
+    "photo": "p2a",
+    "size": 96,
+    "variant": "dither",
+    "label": "Studio family, full"
+  },
+  {
+    "id": "p2a_96_nodither",
+    "photo": "p2a",
+    "size": 96,
+    "variant": "nodither",
+    "label": "Studio family, full"
+  },
+  {
+    "id": "p2b_48_dither",
+    "photo": "p2b",
+    "size": 48,
+    "variant": "dither",
+    "label": "Studio family, centre faces"
+  },
+  {
+    "id": "p2b_48_nodither",
+    "photo": "p2b",
+    "size": 48,
+    "variant": "nodither",
+    "label": "Studio family, centre faces"
+  },
+  {
+    "id": "p3a_48_dither",
+    "photo": "p3a",
+    "size": 48,
+    "variant": "dither",
+    "label": "Birthday family, full"
+  },
+  {
+    "id": "p3a_48_nodither",
+    "photo": "p3a",
+    "size": 48,
+    "variant": "nodither",
+    "label": "Birthday family, full"
+  },
+  {
+    "id": "p3a_96_dither",
+    "photo": "p3a",
+    "size": 96,
+    "variant": "dither",
+    "label": "Birthday family, full"
+  },
+  {
+    "id": "p3a_96_nodither",
+    "photo": "p3a",
+    "size": 96,
+    "variant": "nodither",
+    "label": "Birthday family, full"
+  },
+  {
+    "id": "p3b_48_dither",
+    "photo": "p3b",
+    "size": 48,
+    "variant": "dither",
+    "label": "Birthday family, faces"
+  },
+  {
+    "id": "p3b_48_nodither",
+    "photo": "p3b",
+    "size": 48,
+    "variant": "nodither",
+    "label": "Birthday family, faces"
+  },
+  {
+    "id": "p4_48_dither",
+    "photo": "p4",
+    "size": 48,
+    "variant": "dither",
+    "label": "Toddler on bench"
+  },
+  {
+    "id": "p4_48_nodither",
+    "photo": "p4",
+    "size": 48,
+    "variant": "nodither",
+    "label": "Toddler on bench"
+  },
+  {
+    "id": "p5_48_dither",
+    "photo": "p5",
+    "size": 48,
+    "variant": "dither",
+    "label": "Man, colour background"
+  },
+  {
+    "id": "p5_48_nodither",
+    "photo": "p5",
+    "size": 48,
+    "variant": "nodither",
+    "label": "Man, colour background"
+  }
+]

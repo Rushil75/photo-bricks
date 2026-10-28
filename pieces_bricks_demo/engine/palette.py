@@ -8,7 +8,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
-from skimage.color import rgb2lab
+from .color import rgb2lab
 
 DEFAULT_PALETTE = Path(__file__).resolve().parents[1] / "config" / "palette.json"
 
